@@ -7,11 +7,11 @@
 \format{
 A data frame with 511 rows and 5 variables:
 \itemize{
-  \item cells: count of infected blood cells per square millimetre on microscope slides
-  \item smoker: smoking status of the subject (0: smoker; 1: non smoker)
-  \item gender: subject's gender (1: male; 0: female).
-  \item age: subject's age categorized into three levels: young (\eqn{ \le 20}), mid (21 to 59), and old (\eqn{\ge 60}).
-  \item weight: body mass score categorized into three levels: normal, overweight, obese.
+\item cells: count of infected blood cells per square millimetre on microscope slides
+\item smoker: smoking status of the subject (0: smoker; 1: non smoker)
+\item gender: subject's gender (1: male; 0: female).
+\item age: subject's age categorized into three levels: young (\eqn{ \le 20}), mid (21 to 59), and old (\eqn{\ge 60}).
+\item weight: body mass score categorized into three levels: normal, overweight, obese.
 }
 }
 \description{

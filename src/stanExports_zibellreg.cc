@@ -7,7 +7,7 @@ using namespace Rcpp ;
 RCPP_MODULE(stan_fit4zibellreg_mod) {
 
 
-    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("model_zibellreg")
+    class_<rstan::stan_fit<stan_model, boost::random::ecuyer1988> >("rstantools_model_zibellreg")
 
     .constructor<SEXP,SEXP,SEXP>()
 

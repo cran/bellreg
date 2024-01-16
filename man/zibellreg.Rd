@@ -9,6 +9,8 @@ zibellreg(
   data,
   approach = c("mle", "bayes"),
   hessian = TRUE,
+  link1 = c("logit", "probit", "cloglog", "cauchy"),
+  link2 = c("log", "sqrt", "identity"),
   hyperpars = list(mu_psi = 0, sigma_psi = 10, mu_beta = 0, sigma_beta = 10),
   ...
 )
@@ -22,9 +24,13 @@ zibellreg(
 
 \item{hessian}{hessian logical; If TRUE (default), the hessian matrix is returned when approach="mle".}
 
+\item{link1}{assumed link function for degenerate distribution (logit, probit, cloglog, cauchy); default is logit.}
+
+\item{link2}{assumed link function for count distribution (log, sqrt or identiy); default is log.}
+
 \item{hyperpars}{a list containing the hyperparameters associated with the prior distribution of the regression coefficients; if not specified then default choice is hyperpars = c(mu_psi = 0, sigma_psi = 10, mu_beta = 0, sigma_beta = 10).}
 
-\item{...}{further arguments passed to either `rstan::optimizing` or `rstan::sampling`.}
+\item{...}{further arguments passed to either \code{rstan::optimizing} or \code{rstan::sampling}.}
 }
 \value{
 zibellreg returns an object of class "zibellreg" containing the fitted model.
@@ -35,11 +41,12 @@ Fits the Bell regression model to overdispersed count data.
 \examples{
 \donttest{
 # ML approach:
+data(cells)
 mle <- zibellreg(cells ~ smoker+gender|smoker+gender, data = cells, approach = "mle")
 summary(mle)
 
 # Bayesian approach:
-bayes <- zibellreg(cells ~ 1|smoker+gender, data = cells, approach = "bayes")
+bayes <- zibellreg(cells ~ 1|smoker+gender, data = cells, approach = "bayes", refresh = FALSE)
 summary(bayes)
 }
 

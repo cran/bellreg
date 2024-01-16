@@ -1,11 +1,15 @@
 
+functions{
+#include chunks/links.stan
 #include chunks/mylib.stan
+}
 
 data{
   int<lower=1> n;
   int<lower=1> p;
-  int y[n];
+  array[n] int y;
   matrix[n, p] X;
+  int<lower = 1, upper = 3> link;
   row_vector[p] x_mean;
   vector<lower=0>[p] x_sd;
   int<lower=0, upper=1> approach;
@@ -29,12 +33,14 @@ transformed parameters{
 }
 
 model{
-  real theta[n];
-  vector[n] eta = X*beta_std;
-  real mu[n];
+
+  vector[n] lp = X*beta_std;
+  vector[n] mu = linkinv_bell(lp, link);
+  array[n] real theta;// = lambert_w0(mu);
   for(i in 1:n){
-    mu[i] = exp(eta[i]);
-    theta[i] = lambertW(mu[i]);
+    //mu[i] = exp(eta[i]);
+    //theta[i] = lambertW(mu[i]);
+    theta[i] = lambert_w0(mu[i]); // Stan implementation
   }
 
   target += loglik_bell(y, theta);
@@ -43,3 +49,15 @@ model{
   }
 
 }
+
+
+generated quantities{
+  vector[approach == 1 ? n : 0] log_lik;
+  if(approach == 1){
+    log_lik = loglik_bellreg(y, X, beta_std, link);
+  }
+
+}
+
+
+

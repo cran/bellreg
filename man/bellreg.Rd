@@ -6,9 +6,10 @@
 \usage{
 bellreg(
   formula,
-  data,
+  data = NULL,
   approach = c("mle", "bayes"),
   hessian = TRUE,
+  link = c("log", "sqrt", "identity"),
   hyperpars = list(mu_beta = 0, sigma_beta = 10),
   ...
 )
@@ -22,9 +23,11 @@ bellreg(
 
 \item{hessian}{hessian logical; If TRUE (default), the hessian matrix is returned when approach="mle".}
 
+\item{link}{assumed link function (log, sqrt or identiy); default is log.}
+
 \item{hyperpars}{a list containing the hyperparameters associated with the prior distribution of the regression coefficients; if not specified then default choice is hyperpars = c(mu_beta = 0, sigma_beta = 10).}
 
-\item{...}{further arguments passed to either `rstan::optimizing` or `rstan::sampling`.}
+\item{...}{further arguments passed to either \code{rstan::optimizing} or \code{rstan::sampling}.}
 }
 \value{
 bellreg returns an object of class "bellreg" containing the fitted model.
@@ -34,12 +37,13 @@ Fits the Bell regression model to overdispersed count data.
 }
 \examples{
 \donttest{
+data(faults)
 # ML approach:
 mle <- bellreg(nf ~ lroll, data = faults, approach = "mle")
 summary(mle)
 
 # Bayesian approach:
-bayes <- bellreg(nf ~ lroll, data = faults, approach = "bayes")
+bayes <- bellreg(nf ~ lroll, data = faults, approach = "bayes", refresh = FALSE)
 summary(bayes)
 }
 

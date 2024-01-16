@@ -7,8 +7,8 @@
 \format{
 A data frame with 32 rows and 2 variables:
 \itemize{
-  \item nf: number of faults in rolls of fabric of different lengths.
-  \item lroll: length of the roll.
+\item nf: number of faults in rolls of fabric of different lengths.
+\item lroll: length of the roll.
 }
 }
 \description{

@@ -55,9 +55,8 @@ summary.zibellreg <- function(object, ...){
   q <- object$q
   if(object$approach=="mle"){
     k <- p+q
-
     labels <- object$labels
-    coefficients <- object$fit$par
+    coefficients <- object$fit$par[1:k]
     V <- vcov(object)
 
     se <- sqrt(diag(V))

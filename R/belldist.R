@@ -24,7 +24,7 @@
 #'
 #' Probability mass function
 #' \deqn{
-#' f(x) = \frac{\theta^{x} e^{e^{\theta}+1}B_x}{x!},
+#' f(x) = \frac{\theta^{x} e^{1-e^{\theta}}B_x}{x!},
 #' }
 #' where \eqn{B_x} is the Bell number, and x = 0, 1, ....
 #' @return dbell gives the (log) probability function, pbell gives the (log) distribution function, qbell gives the quantile function, and rbell generates random deviates.
@@ -50,7 +50,8 @@ dbell <- function(x, theta, log = FALSE){
 pbell <- function(q, theta, lower.tail = TRUE, log.p = FALSE){
   prob <- c()
   for(i in 1:length(q)){
-    prob[i] <- sum(dbell(0:q[i], theta, log=FALSE))
+    #prob[i] <- sum(dbell(0:q[i], theta, log=FALSE))
+    prob[i] <- ifelse(q[i] < 0, 0, sum(dbell(0:q[i], theta, log=FALSE)) )
   }
   if(lower.tail==FALSE){
     if(log.p==FALSE){

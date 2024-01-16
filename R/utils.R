@@ -1,41 +1,5 @@
 
 
-### --------------------------------------------------------
-
-hmean <- function(x){
-  return(1/mean(1/x))
-}
-
-### --------------------------------------------------------
-# Function to compute the LPML criteria:
-LPML <- function(loglik, n){
-  lik <- apply(loglik, 2, exp)
-  CPO <- apply(lik, 2, hmean)
-  LPML <- sum(log(CPO))
-  aLPML <- mean(log(CPO))
-  return(c(LPML, aLPML))
-}
-
-### --------------------------------------------------------
-# Function to compute the DIC criteria:
-DIC <- function(loglik, n){
-  D <- apply( -2*loglik, 1, sum);
-  pD <- 0.5*stats::var(D)
-  DIC <- mean(D) + pD;
-  return( matrix(c(DIC, pD), ncol=2) )
-}
-
-### --------------------------------------------------------
-# Function to compute the WAIC criteria:
-WAIC <- function(loglik, n){
-  lpd <- sum( log( apply(exp(loglik), 2, mean) ) )
-  pD <- sum( apply(loglik,  2, stats::var) )
-  WAIC <- lpd - pD
-  return( matrix(c(WAIC, pD),ncol=2) )
-}
-
-
-
 #---------------------------------------------
 #' Variance-covariance matrix for a bellreg model
 #'
@@ -48,6 +12,7 @@ WAIC <- function(loglik, n){
 #'
 #' @examples
 #' \donttest{
+#' data(faults)
 #' fit <- bellreg(nf ~ lroll, data = faults)
 #' vcov(fit)
 #' }
@@ -72,6 +37,7 @@ vcov.bellreg <- function(object, ...){
 #'
 #' @examples
 #' \donttest{
+#' data(cells)
 #' fit <- zibellreg(cells ~ smoker + gender|smoker + gender, data = cells)
 #' vcov(fit)
 #' }
@@ -96,6 +62,7 @@ vcov.zibellreg <- function(object, ...){
 #'
 #' @examples
 #' \donttest{
+#' data(faults)
 #' fit <- bellreg(nf ~ lroll, data=faults)
 #' coef(fit)
 #' }
@@ -118,6 +85,7 @@ coef.bellreg <- function(object, ...){
 #'
 #' @examples
 #' \donttest{
+#' data(cells)
 #' fit <- zibellreg(cells ~ smoker + gender|smoker + gender, data = cells)
 #' coef(fit)
 #' }
@@ -136,33 +104,25 @@ coef.zibellreg <- function(object, ...){
   return(coeffs)
 }
 
-
-#---------------------------------------------
-#' Generic S3 method confint
-#' @export
-#' @param object a fitted model object
-#' @param ... further arguments passed to or from other methods.
-#' @return the estimated regression coefficients
-#'
-confint <- function(object, ...) UseMethod("confint")
-
 #---------------------------------------------
 #' Confidence intervals for the regression coefficients
 #'
 #' @aliases confint.bellreg
 #' @export
 #' @param object an object of the class bellreg
+#' @param parm a specification of which parameters are to be given confidence intervals, either a vector of numbers or a vector of names. If missing, all parameters are considered.
 #' @param level the confidence level required
 #' @param ... further arguments passed to or from other methods
-#' @return  100(1-alpha)% confidence intervals for the regression coefficients
+#' @return  A matrix (or vector) with columns giving lower and upper confidence limits for each parameter. These will be labelled as (1-level)/2 and 1 - (1-level)/2 in \% (by default 2.5\% and 97.5\%).
 #'
 #' @examples
 #' \donttest{
+#' data(faults)
 #' fit <- bellreg(nf ~ lroll, data = faults)
 #' confint(fit)
 #' }
 #'
-confint.bellreg <- function(object, level=0.95, ...){
+confint.bellreg <- function(object, parm = NULL, level=0.95, ...){
   p <- object$p
   q <- object$q
   V <- vcov(object)
@@ -174,7 +134,13 @@ confint.bellreg <- function(object, level=0.95, ...){
   CI <- cbind(lower, upper)
   labels <- round(100*(c(alpha/2, 1-alpha/2)),1)
   colnames(CI) <- paste0(labels, "%")
-  return(CI)
+  if(is.null(parm)){
+    return(CI)
+  }else{
+    CI <- CI[parm, ,drop = FALSE]
+    return(CI)
+  }
+
 }
 
 
@@ -184,18 +150,20 @@ confint.bellreg <- function(object, level=0.95, ...){
 #' @aliases confint.zibellreg
 #' @export
 #' @param object an object of the class zibellreg
+#' @param parm a specification of which parameters are to be given confidence intervals, either a vector of numbers or a vector of names. If missing, all parameters are considered.
 #' @param level the confidence level required
 #' @param ... further arguments passed to or from other methods
 #' @return  100(1-alpha)% confidence intervals for the regression coefficients
 #'
 #' @examples
 #' \donttest{
+#' data(cells)
 #' fit <- zibellreg(cells ~ smoker+gender|smoker+gender, data = cells, approach = "mle")
 #' confint(fit)
 #' }
 #'
 
-confint.zibellreg <- function(object, level=0.95, ...){
+confint.zibellreg <- function(object, parm = NULL, level=0.95, ...){
   p <- object$p
   q <- object$q
   V <- vcov(object)
@@ -207,6 +175,18 @@ confint.zibellreg <- function(object, level=0.95, ...){
   ci <- cbind(lower, upper)
   labels <- round(100*(c(alpha/2, 1-alpha/2)),1)
   colnames(ci) <- paste0(labels, "%")
+  # if(!is.null(parm)){
+  #   ci <- ci[parm, ,drop = FALSE]
+  # }
   CI <- list("Degenerated dist." = ci[1:p, ], "Bell dist." = ci[(q+1):(q+p),])
   return(CI)
 }
+
+
+# estimates <- function(object, parm = NULL, conf.level = 0.95, ...) UseMethod("estimates")
+#
+# estimates.bellreg <- function(object, parm = NULL, conf.level = 0.95){
+#   Estimate <- coef(object)
+#   CI <- confint(object)
+#   return(cbind(Estimate, CI))
+# }

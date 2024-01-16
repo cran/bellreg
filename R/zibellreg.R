@@ -8,6 +8,8 @@
 #' @param formula an object of class "formula" (or one that can be coerced to that class): a symbolic description of the model to be fitted.
 #' @param data an optional data frame, list or environment (or object coercible by as.data.frame to a data frame) containing the variables in the model. If not found in data, the variables are taken from environment(formula), typically the environment from which ypbp is called.
 #' @param approach approach to be used to fit the model (mle: maximum likelihood; bayes: Bayesian approach).
+#' @param link1 assumed link function for degenerate distribution (logit, probit, cloglog, cauchy); default is logit.
+#' @param link2 assumed link function for count distribution (log, sqrt or identiy); default is log.
 #' @param hessian hessian logical; If TRUE (default), the hessian matrix is returned when approach="mle".
 #' @param hyperpars a list containing the hyperparameters associated with the prior distribution of the regression coefficients; if not specified then default choice is hyperpars = c(mu_psi = 0, sigma_psi = 10, mu_beta = 0, sigma_beta = 10).
 #' @param ... further arguments passed to either `rstan::optimizing` or `rstan::sampling`.
@@ -16,17 +18,21 @@
 #' @examples
 #' \donttest{
 #' # ML approach:
+#' data(cells)
 #' mle <- zibellreg(cells ~ smoker+gender|smoker+gender, data = cells, approach = "mle")
 #' summary(mle)
 #'
 #' # Bayesian approach:
-#' bayes <- zibellreg(cells ~ 1|smoker+gender, data = cells, approach = "bayes")
+#' bayes <- zibellreg(cells ~ 1|smoker+gender, data = cells, approach = "bayes", refresh = FALSE)
 #' summary(bayes)
 #' }
 #'
 zibellreg<- function(formula, data, approach = c("mle", "bayes"), hessian = TRUE,
+                     link1 = c("logit", "probit", "cloglog", "cauchy"), link2 = c("log", "sqrt", "identity"),
                    hyperpars = list(mu_psi=0, sigma_psi=10, mu_beta=0, sigma_beta=10), ...){
   approach <- match.arg(approach)
+  link1 <- match.arg(link1)
+  link2 <- match.arg(link2)
   formula <- Formula::Formula(formula)
   mf <- stats::model.frame(formula=formula, data=data)
   Terms <- stats::terms(mf)
@@ -57,6 +63,7 @@ zibellreg<- function(formula, data, approach = c("mle", "bayes"), hessian = TRUE
     X_std <- X
     x_mean <- array(0)
     x_sd <- array(1)
+    Delta_x <- diag(n)
   }
 
 
@@ -78,13 +85,31 @@ zibellreg<- function(formula, data, approach = c("mle", "bayes"), hessian = TRUE
       Z_std <- Z
       z_mean <- array(0)
       z_sd <- array(1)
+      Delta_z <- diag(n)
     }
+
+
+  Link1 <- switch(link1,
+                  "logit" = 1,
+                  "probit" = 2,
+                  "cloglog" = 3,
+                  "cauchy" = 4
+  )
+
+  Link2 <- switch(link2,
+                  "log" = 1,
+                  "sqrt" = 2,
+                  "identity" = 3
+  )
+
 
 
   stan_data <- list(y=y, X=X_std, Z=Z_std, n=n, p=p, q=q, x_mean=x_mean, x_sd=x_sd, z_mean=z_mean, z_sd=z_sd,
                     mu_beta = hyperpars$mu_beta, sigma_beta=hyperpars$sigma_beta,
                     mu_psi = hyperpars$mu_psi, sigma_psi=hyperpars$sigma_psi,
-                    approach=0)
+                    approach=0, link1 = Link1, link2 = Link2)
+
+
 
   if(approach=="mle"){
     fit <- rstan::optimizing(stanmodels$zibellreg, hessian=hessian,
@@ -118,6 +143,8 @@ zibellreg<- function(formula, data, approach = c("mle", "bayes"), hessian = TRUE
   fit$labels1 <- Zlabels
   fit$labels2 <- Xlabels
   fit$approach <- approach
+  fit$link1 <- link1
+  fit$link2 <- link2
   class(fit) <- "zibellreg"
   return(fit)
 }
