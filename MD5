@@ -1,7 +1,7 @@
-6557067dedc40bb7a0e45ad49094d0da *DESCRIPTION
+839c336bacc415ca43d7777542e8e589 *DESCRIPTION
 c4ca34293d5282d2d8b35c96439566aa *LICENSE
 9abc770eb1d0a03a2747bef79046e155 *NAMESPACE
-c6cd532d7e21a1d62cf7e838fa06183a *NEWS.md
+ec358af38e2ebec7a86ab1917c13a2e7 *NEWS.md
 b1fd04f2f61b453cfa5a7f49abee649c *R/aic.R
 6d432e86827ee1f1e440011feefcdaa7 *R/belldist.R
 43f3a09cfb50dea4bc55721101ed9bf7 *R/bellreg-package.R
@@ -15,9 +15,9 @@ c63908a29bbe09eb68f26cad54dd821f *R/residuals.R
 ac306b73459a0f1f8dd9ea88eef59ae5 *R/utils.R
 961235289062474ce2e90feb98d1c647 *R/zibelldist.R
 a4d631dab57dc90dec48d480de243d6b *R/zibellreg.R
-27a1a4aee4d434b6c685c0d8342102ed *README.md
-14e8866936e9e03021fc05180dfd54f5 *build/partial.rdb
-667a89734cefaa3a95b11898436a341f *build/vignette.rds
+be66b973ce731d5b966830d11d2537b2 *README.md
+5dffb14b0e7ceaec111e0bda2139011a *build/partial.rdb
+495534d866d25cf498b65458970103c5 *build/vignette.rds
 7e297a31e37e77c201a2bacff2f979eb *configure
 5fdedca26c8830d7bb06aa1c4a634204 *configure.win
 4be03afdac0931800f5551a013b3822f *data/cells.rda
@@ -25,10 +25,10 @@ eefbbb4c18a4236b4998162cdcd26014 *data/faults.rda
 0802af12204d50f0239cdc1dfd10392a *inst/REFERENCES.bib
 bc849bd70171498173300c479e82926b *inst/doc/bellreg.R
 d40905faebf97dc269d81d7a84e7dec5 *inst/doc/bellreg.Rmd
-6ef9979c06c728599109f0a8956dca48 *inst/doc/bellreg.html
+6908df5d1557e5fa06a97937459a12d4 *inst/doc/bellreg.html
 fcf227a13afc0acc64f82581fd892390 *inst/doc/zibellreg.R
 95db6cf64e959461b37e7ee6192df7e7 *inst/doc/zibellreg.Rmd
-9d53d8aacd5eabf04217fe3b39e737c0 *inst/doc/zibellreg.html
+fd6c9f075c76d831334f26204cbd0a12 *inst/doc/zibellreg.html
 855c064dbf8deaff96c8dc8a87169109 *inst/include/stan_meta_header.hpp
 96ba5b1a7c6fdee3783c17e54e443b4c *inst/stan/bellreg.stan
 f6e4ed85c6f155f89b412d19adfd63f7 *inst/stan/chunks/links.stan
