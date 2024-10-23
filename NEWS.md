@@ -13,3 +13,8 @@
 # bellreg 0.0.2.1
 
 * Update informatation in DESCRIPTION file.
+
+
+# bellreg 0.0.2.2
+
+* Implementation of bell() function for compatibility with stas::glm() function.
